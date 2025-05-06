@@ -921,42 +921,45 @@ class TicketBookingApp:
     def book_tickets(self, event):
         self.clear_screen()
         tk.Label(self.welcome_frame, text="Book Tickets for " + event.getName(), font=("Arial", 18)).pack(pady=20)
-
         ticket_types = event.getTicketTypes()
         ticket_selections = {}
 
         for ticket_type, details in ticket_types.items():
             frame = tk.Frame(self.welcome_frame)
             frame.pack(pady=5)
-
             tk.Label(frame, text=ticket_type + " - AED" + str(details['price'])).pack(side="left", padx=10)
             tk.Label(frame, text=details["features"]).pack(side="left", padx=10)
             quantity_var = tk.IntVar(value=0)
             ticket_selections[ticket_type] = quantity_var
-
-            tk.Spinbox(frame, from_=0, to=event.getAvailableSeats(), textvariable=quantity_var, width=5).pack(side="right")
+            tk.Spinbox(frame, from_=0, to=event.getAvailableSeats(), textvariable=quantity_var, width=5).pack(
+                side="right")
 
         def confirm_booking():
             total_tickets = 0
             selected_tickets = []
-            for ticket_type,quantity_var in ticket_selections.items():
+            for ticket_type, quantity_var in ticket_selections.items():
                 quantity = quantity_var.get()
                 if quantity > 0:
                     total_tickets += quantity
                     for i in range(quantity):
-                        ticket = event.createTicket(seat_number=random.randint(1, 1000),price=ticket_types[ticket_type]["price"],ticket_type=ticket_type)
+                        ticket = event.createTicket(
+                            seat_number=random.randint(1, 1000),
+                            price=ticket_types[ticket_type]["price"],
+                            ticket_type=ticket_type
+                        )
                         selected_tickets.append(ticket)
 
             if total_tickets == 0:
                 messagebox.showerror("Error", "Please select at least one ticket")
                 return
 
-            # Create booking and proceed to payment
+                # Create booking and add to current_user
             booking = Booking(self.current_user)
             for ticket in selected_tickets:
                 booking.addTicket(ticket)
 
             self.current_user.addBooking(booking)
+            self.data_manager.save_accounts(self.accounts)
             self.data_manager.save_events(self.events)
             self.show_payment_screen(booking)
 
@@ -1069,16 +1072,15 @@ class TicketBookingApp:
                 booking_frame = tk.Frame(self.welcome_frame, relief="ridge", borderwidth=1)
                 booking_frame.pack(fill="x", padx=10, pady=5)
 
-                tk.Label(booking_frame, text="Booking ID:", value=booking.getBookingId()).pack(anchor="w")
-                tk.Label(booking_frame, text="Booking Date:", value=booking.getBookingDate()).pack(anchor="w")
-                tk.Label(booking_frame, text="Status:", value=booking.getStatus()).pack(anchor="w")
-                tk.Label(booking_frame, text="Total Tickets:", value=len(booking.getTickets())).pack(anchor="w")
+                tk.Label(booking_frame, text="Booking ID: " + booking.getBookingId()).pack(anchor="w")
+                tk.Label(booking_frame, text="Booking Date: " + booking.getBookingDate()).pack(anchor="w")
+                tk.Label(booking_frame, text="Status: " + booking.getStatus()).pack(anchor="w")
+                tk.Label(booking_frame, text="Total Tickets: " + str(len(booking.getTickets()))).pack(anchor="w")
 
                 def show_ticket_details(booking_obj=booking):
                     self.clear_screen()
-                    tk.Label(self.welcome_frame, text="Tickets for Booking ID: " + str(booking_obj.getBookingId()), font=("Arial", 18)).pack(pady=20)
-
-
+                    tk.Label(self.welcome_frame, text="Tickets for Booking ID: " + str(booking_obj.getBookingId()),
+                             font=("Arial", 18)).pack(pady=20)
                     for ticket in booking_obj.getTickets():
                         ticket_frame = tk.Frame(self.welcome_frame, relief="ridge", borderwidth=1)
                         ticket_frame.pack(fill="x", padx=10, pady=5)
@@ -1093,7 +1095,7 @@ class TicketBookingApp:
 
                 tk.Button(booking_frame, text="View Tickets", command=show_ticket_details).pack(anchor="e", pady=5)
 
-            tk.Button(self.welcome_frame, text="Back", command=self.show_customer_dashboard).pack(pady=10)
+        tk.Button(self.welcome_frame, text="Back", command=self.show_customer_dashboard).pack(pady=10)
 
     def view_ticket_sales(self):
         self.clear_screen()
