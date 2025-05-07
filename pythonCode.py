@@ -1020,9 +1020,10 @@ class TicketBookingApp:
                 self.data_manager.save_orders(self.orders)
                 messagebox.showinfo("Success", "Order deleted successfully!")
                 self.manage_orders()
+            # try carch is used to catch any unexpected exception
             except Exception as e:
                 messagebox.showerror("Error", "Failed to delete order: " + str(e))
-
+    # Method to show payment screen
     def show_payment_screen(self, booking):
         self.clear_screen()
         tk.Label(self.welcome_frame, text="Payment", font=("Arial", 18)).pack(pady=20)
@@ -1037,10 +1038,11 @@ class TicketBookingApp:
         tk.Label(self.welcome_frame, text="Card Number").pack()
         card_number_entry = tk.Entry(self.welcome_frame)
         card_number_entry.pack()
-
+        # Processing payment here
         def process_payment():
             payment_method = payment_method_var.get()
             card_number = card_number_entry.get()
+            # check cardnumber
             if not card_number:
                 messagebox.showerror("Error", "Card number is required")
                 return
@@ -1060,7 +1062,7 @@ class TicketBookingApp:
 
         tk.Button(self.welcome_frame, text="Pay Now", command=process_payment).pack(pady=10)
         tk.Button(self.welcome_frame, text="Back",command=lambda: self.book_tickets(booking.getTickets()[0].getEvent())).pack(pady=10)
-
+    # Method to should the list of bookings with a method to show ticket details
     def show_booking_list(self):
         self.clear_screen()
         tk.Label(self.welcome_frame, text="Your Bookings", font=("Arial", 18)).pack(pady=20)
