@@ -621,7 +621,6 @@ class TicketBookingApp:
     def show_admin_dashboard(self):
         self.clear_screen()
         tk.Label(self.welcome_frame, text="Admin Dashboard", font=("Arial", 18)).pack(pady=20)
-
         tk.Button(self.welcome_frame, text="Manage Events", width=20, command=self.manage_events).pack(pady=10)
         tk.Button(self.welcome_frame, text="Manage Orders", width=20, command=self.manage_orders).pack(pady=10)
         tk.Button(self.welcome_frame, text="Manage Customers", width=20, command=self.manage_customers).pack(pady=10)
@@ -640,7 +639,6 @@ class TicketBookingApp:
         for event in self.events:
             frame = tk.Frame(events_frame, relief="ridge", borderwidth=1)
             frame.pack(fill="x", padx=10, pady=5)
-
             tk.Label(frame, text="Event Name: " + event.getName()).pack(anchor="w")
             tk.Label(frame, text="Date: " + event.getDate()).pack(anchor="w")
             tk.Label(frame, text="Venue: " + event.getVenue()).pack(anchor="w")
@@ -657,7 +655,6 @@ class TicketBookingApp:
                         self.manage_events()
                     except ValueError as e:
                         messagebox.showerror("Error", str(e))
-
             tk.Button(frame, text="Set Discount", command=update_discount).pack(side="right", padx=5)
             tk.Button(frame, text="Modify", command=lambda e=event: self.modify_event(e)).pack(side="right", padx=5)
             tk.Button(frame, text="Delete", command=lambda e=event: self.delete_event(e)).pack(side="right", padx=5)
@@ -699,11 +696,9 @@ class TicketBookingApp:
             if not name or not date or not venue or total_seats <= 0:
                 messagebox.showerror("Error", "All fields are required, and total seats must be greater than zero.")
                 return
-
-                # Create the new event
+            # Create the new event
             new_event = Event(name, date, venue, total_seats)
             self.events.append(new_event)
-
             # Save events to file
             self.data_manager.save_events(self.events)
             messagebox.showinfo("Success", "Event added successfully!")
@@ -745,12 +740,11 @@ class TicketBookingApp:
             except ValueError:
                 messagebox.showerror("Error", "Total seats must be a valid number.")
                 return
-
             if not name or not date or not venue or total_seats <= 0:
                 messagebox.showerror("Error", "All fields are required, and total seats must be greater than zero.")
                 return
 
-                # Update the event details
+            # Update the event details
             event.setName(name)
             event.setDate(date)
             event.setVenue(venue)
@@ -798,7 +792,7 @@ class TicketBookingApp:
         # Add customer button
         tk.Button(self.welcome_frame, text="Add Customer", command=self.add_customer).pack(pady=10)
         tk.Button(self.welcome_frame, text="Back", command=self.show_admin_dashboard).pack(pady=10)
-
+    #Method where we will be adding customer
     def add_customer(self):
         self.clear_screen()
         tk.Label(self.welcome_frame, text="Add Customer", font=("Arial", 18)).pack(pady=20)
@@ -836,11 +830,9 @@ class TicketBookingApp:
             new_customer = Customer(name, email, phone)
             new_account = Account(username, password, new_customer)
             self.accounts.append(new_account)
-            # Save accounts to file
             self.data_manager.save_accounts(self.accounts)
             messagebox.showinfo("Success", "Customer added successfully!")
             self.manage_customers()
-
         tk.Button(self.welcome_frame, text="Save", command=save_new_customer).pack(pady=10)
         tk.Button(self.welcome_frame, text="Back", command=self.manage_customers).pack(pady=10)
 
@@ -1127,11 +1119,11 @@ class TicketBookingApp:
     def logout(self):
         self.current_user = None
         self.show_welcome_screen()
-
     def clear_screen(self):
         for widget in self.welcome_frame.winfo_children():
             widget.destroy()
 
+#This is where we will be calling the main application
 root = tk.Tk()
 app = TicketBookingApp(root)
 root.mainloop()
